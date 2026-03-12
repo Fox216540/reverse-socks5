@@ -3,7 +3,11 @@ set -e
 
 # Проброс SOCKS5 через SSH c использованием gost
 PORT="${1:-1080}"
-LOG="/tmp/gost-${PORT}.log"
+LOG_DIR="${TMPDIR:-/tmp}"
+if [ ! -w "$LOG_DIR" ]; then
+  LOG_DIR="$HOME"
+fi
+LOG="${LOG_DIR}/gost-${PORT}.log"
 
 nohup gost -L "socks5://127.0.0.1:${PORT}" ssh -R "127.0.0.1:${PORT}:127.0.0.1:${PORT}" root@217.154.97.70 \
   >"$LOG" 2>&1 &
